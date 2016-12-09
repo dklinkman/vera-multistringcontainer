@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<implementation>
+  <functions>
+
+	SID = "urn:upnp-org:serviceId:VContainer1"
+	VN = "VariableName"
+	VV = "Variable"
+  
+	local defaultMNL = 22
+	local defaultMVL = 20
+	local oMNL = 22
+	local oMVL = 20
+	local oRVn = {}
+	local oCEn = {}
+	local oCTn = {}
+	local oCDn = {}
+	
+    --
+    -- register the device type with altui
+    --
+    function registerWithAltui()
+        for k, v in pairs(luup.devices) do
+            if (v.device_type == "urn:schemas-upnp-org:device:altui:1") then
+                if luup.is_ready(k) then
+                    luup.log("Found ALTUI device "..k.." registering MultiString devices.")
+                    local arguments = {}
+                    arguments["newDeviceType"] = "urn:schemas-upnp-org:device:VContainer:1"   
+                    arguments["newScriptFile"] = "J_PingSensorEx.js"   
+                    arguments["newDeviceDrawFunc"] = "ALTUI_PingSensorExDisplays.drawMultiString"   
+                    arguments["newStyleFunc"] = ""   
+                    arguments["newDeviceIconFunc"] = ""   
+                    arguments["newControlPanelFunc"] = ""   
+                    -- Main device
+                    luup.call_action("urn:upnp-org:serviceId:altui1", "RegisterPlugin", arguments, k)
+                else
+                    luup.log("ALTUI plugin is not yet ready, retry register MultiString in a bit..")
+                    luup.call_delay("registerWithAltui", 10, "", false)
+                end
+                break
+            end
+        end
+        return true
+    end
+
+	function initstatus(lul_device)
+		local temp
+
+		if luup.version_major == 7 then DoUI7() end
+        
+        --registerWithAltui()
+
+		for i=1,5 do
+			temp = luup.variable_get(SID,VN .. i, lul_device)
+			if temp == nil then
+				luup.variable_set(SID,VN .. i,"V" .. i,lul_device)
+			end
+			temp = luup.variable_get(SID,VV .. i, lul_device)
+			if temp == nil then
+				luup.variable_set(SID,VV .. i,"", lul_device)
+			end
+		end
+
+		local opts = luup.variable_get(SID,"Options", lul_device)
+		if opts == nil then
+			opts = ""
+			luup.variable_set(SID,"Options",opts,lul_device)
+		end
+		getOptions(opts)
+
+		if luup.version_major == 7 then luup.set_failure(0, lul_device) end
+
+		end
+
+	function DoUI7()
+		defaultMNL = 32
+		defaultMVL = 32
+		local lfs = require "lfs"
+		local ui5json = "/etc/cmh-ludl/D_MString.json.lzo"
+		local ui7json = "/etc/cmh-ludl/D_MString_UI7.json.lzo"
+		if lfs.attributes(ui7json,"size") ~= lfs.attributes(ui5json,"size") then
+			os.execute('cp -p '..ui7json..' '.. ui5json)
+		end
+		local ui5icon = "/www/cmh/skins/default/icons/MString.png"
+		local ui7icon = "/www/cmh/skins/default/img/devices/device_states/MString.png"
+		if lfs.attributes(ui7icon,"size") == nil then
+			os.execute('cp -p '..ui5icon..' '.. ui7icon)
+		end
+	end
+
+	function limitRange(item,min,max)
+		if min > item then return min
+		elseif item > max then return max
+		else return item
+		end
+	end
+		
+	function getOptions(sopt)
+		if sopt == nil then return end
+		sopt = string.lower(string.gsub(sopt," ",""))
+		local mnl = string.match(sopt,"mnl=(%d+)")
+		if mnl ~= nil then oMNL = limitRange(tonumber(mnl,10),1,32) else oMNL = defaultMNL end
+		local mvl = string.match(sopt,"mvl=(%d+)")
+		if mvl ~= nil then oMVL = limitRange(tonumber(mvl,10),1,32) else oMVL = defaultMVL end
+		for i=1,5 do
+			rv = string.match(sopt,"rv"..i.."=(%d+)")
+			if rv ~= nil then oRVn[i] = limitRange(tonumber(rv,10),0,9) else oRVn[i] = nil end
+			oCEn[i] = (string.find(sopt,"ce"..i) ~= nil)
+			oCTn[i] = (string.find(sopt,"ct"..i) ~= nil)
+			oCDn[i] = (string.find(sopt,"cd"..i) ~= nil)
+		end
+	end
+
+	local function trimN(strIn)
+		if #strIn > oMNL then strIn = string.sub(strIn,1,oMNL) end
+		return strIn
+	end
+
+	local function trimV(strIn)
+		if #strIn > oMVL then strIn = string.sub(strIn,1,oMVL) end
+		return strIn
+	end
+
+	local function roundV(strIn, nV)
+		if tonumber(strIn) == nil then return strIn end
+		if oCEn[nV] then
+			return os.date("%T %d %b %Y",tonumber(strIn))
+		elseif oCTn[nV] then
+			local ms = string.match(strIn,"%.(%d+)")
+			if ms ~= nil then return os.date("%T",math.floor(tonumber(strIn))) .. string.format(".%03d",math.floor(tonumber("0." .. ms)*1000))
+			else return os.date("%T",tonumber(strIn))
+			end
+		elseif oCDn[nV] then
+			return os.date("%d %b %Y",tonumber(strIn))
+		elseif oRVn[nV] == nil then
+			return strIn
+		else
+			return string.format("%." .. oRVn[nV] .. "f", strIn)
+		end
+	end
+	
+</functions>
+  
+ <startup>initstatus</startup>
+
+ <actionList>
+   
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariableName1</name>
+		<run>
+			local vName = lul_settings.newVariableName1 or ""
+			luup.variable_set(SID,"VariableName1",trimN(vName),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariable1</name>
+		<run>
+			local vValue = lul_settings.newVariable1 or ""
+			luup.variable_set(SID,"Variable1",trimV(roundV(vValue,1)),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariableName2</name>
+		<run>
+			local vName = lul_settings.newVariableName2 or ""
+			luup.variable_set(SID,"VariableName2",trimN(vName),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariable2</name>
+		<run>
+			local vValue = lul_settings.newVariable2 or ""
+			luup.variable_set(SID,"Variable2",trimV(roundV(vValue,2)),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariableName3</name>
+		<run>
+			local vName = lul_settings.newVariableName3 or ""
+			luup.variable_set(SID,"VariableName3",trimN(vName),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariable3</name>
+		<run>
+			local vValue = lul_settings.newVariable3 or ""
+			luup.variable_set(SID,"Variable3",trimV(roundV(vValue,3)),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariableName4</name>
+		<run>
+			local vName = lul_settings.newVariableName4 or ""
+			luup.variable_set(SID,"VariableName4",trimN(vName),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariable4</name>
+		<run>
+			local vValue = lul_settings.newVariable4 or ""
+			luup.variable_set(SID,"Variable4",trimV(roundV(vValue,4)),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariableName5</name>
+		<run>
+			local vName = lul_settings.newVariableName5 or ""
+			luup.variable_set(SID,"VariableName5",trimN(vName),lul_device)
+		</run>
+    </action>
+
+    <action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetVariable5</name>
+		<run>
+			local vValue = lul_settings.newVariable5 or ""
+			luup.variable_set(SID,"Variable5",trimV(roundV(vValue,5)),lul_device)
+		</run>
+    </action>
+
+	<action>
+		<serviceId>urn:upnp-org:serviceId:VContainer1</serviceId>
+		<name>SetOptions</name>
+		<run>
+			local newopts = lul_settings.newOptions or ""
+			luup.variable_set(SID, "Options", newopts, lul_device)
+			getOptions(newopts)
+		</run>
+	</action>
+
+   </actionList>
+</implementation>
+ 

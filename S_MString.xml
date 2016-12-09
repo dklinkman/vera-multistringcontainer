@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+	<specVersion>
+		<major>1</major>
+		<minor>0</minor>
+	</specVersion>
+	<serviceStateTable>
+		
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>VariableName1</name>
+			<dataType>string</dataType>
+			<shortCode>variablename1</shortCode>
+		</stateVariable>
+
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>Variable1</name>
+			<dataType>string</dataType>
+			<shortCode>variable1</shortCode>
+		</stateVariable>
+	
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>VariableName2</name>
+			<dataType>string</dataType>
+			<shortCode>variablename2</shortCode>
+		</stateVariable>
+
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>Variable2</name>
+			<dataType>string</dataType>
+			<shortCode>variable2</shortCode>
+		</stateVariable>
+	
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>VariableName3</name>
+			<dataType>string</dataType>
+			<shortCode>variablename3</shortCode>
+		</stateVariable>
+
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>Variable3</name>
+			<dataType>string</dataType>
+			<shortCode>variable3</shortCode>
+		</stateVariable>
+	
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>VariableName4</name>
+			<dataType>string</dataType>
+			<shortCode>variablename4</shortCode>
+		</stateVariable>
+
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>Variable4</name>
+			<dataType>string</dataType>
+			<shortCode>variable4</shortCode>
+		</stateVariable>
+	
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>VariableName5</name>
+			<dataType>string</dataType>
+			<shortCode>variablename5</shortCode>
+		</stateVariable>
+
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>Variable5</name>
+			<dataType>string</dataType>
+			<shortCode>variable5</shortCode>
+		</stateVariable>
+		
+		<stateVariable>
+			<sendEventsAttribute>no</sendEventsAttribute>
+			<name>Options</name>
+			<dataType>string</dataType>
+			<shortCode>options</shortCode>
+		</stateVariable>
+		
+	</serviceStateTable>
+
+	<actionList>
+	
+		<action>
+			<name>SetVariableName1</name>
+			<argumentList>
+				<argument>
+					<name>newVariableName1</name>
+					<direction>in</direction>
+					<relatedStateVariable>VariableName1</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariable1</name>
+			<argumentList>
+				<argument>
+					<name>newVariable1</name>
+					<direction>in</direction>
+					<relatedStateVariable>Variable1</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariableName2</name>
+			<argumentList>
+				<argument>
+					<name>newVariableName2</name>
+					<direction>in</direction>
+					<relatedStateVariable>VariableName2</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariable2</name>
+			<argumentList>
+				<argument>
+					<name>newVariable2</name>
+					<direction>in</direction>
+					<relatedStateVariable>Variable2</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariableName3</name>
+			<argumentList>
+				<argument>
+					<name>newVariableName3</name>
+					<direction>in</direction>
+					<relatedStateVariable>VariableName3</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariable3</name>
+			<argumentList>
+				<argument>
+					<name>newVariable3</name>
+					<direction>in</direction>
+					<relatedStateVariable>Variable3</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariableName4</name>
+			<argumentList>
+				<argument>
+					<name>newVariableName4</name>
+					<direction>in</direction>
+					<relatedStateVariable>VariableName4</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariable4</name>
+			<argumentList>
+				<argument>
+					<name>newVariable4</name>
+					<direction>in</direction>
+					<relatedStateVariable>Variable4</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariableName5</name>
+			<argumentList>
+				<argument>
+					<name>newVariableName5</name>
+					<direction>in</direction>
+					<relatedStateVariable>VariableName5</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+		<action>
+			<name>SetVariable5</name>
+			<argumentList>
+				<argument>
+					<name>newVariable5</name>
+					<direction>in</direction>
+					<relatedStateVariable>Variable5</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+	
+		<action>
+			<name>SetOptions</name>
+			<argumentList>
+				<argument>
+					<name>newOptions</name>
+					<direction>in</direction>
+					<relatedStateVariable>Options</relatedStateVariable>
+				</argument>
+			</argumentList>
+		</action>
+
+	</actionList>
+</scpd>
+ 
